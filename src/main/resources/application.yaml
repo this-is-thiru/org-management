@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: org-management
+
+  datasource:
+    url: jdbc:mysql://odtT71WYU8ZFPwL.root:53CHX8z7TFG0cZhY@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/test?sslMode=VERIFY_IDENTITY
+  jpa:
+    hibernate:
+      ddl-auto: update
