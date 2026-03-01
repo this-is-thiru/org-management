@@ -9,6 +9,7 @@ public class ComplaintCreationDto {
     private String clientId;
     private String customerId;
     private String title;
+    private String roomNumber;
     private String description;
     private List<String> notes;
     private Integer statusId;

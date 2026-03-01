@@ -10,4 +10,6 @@ public interface UserDetailsRepository extends JpaRepository<UserDetail, Long> {
 	Optional<UserDetail> findByCustomerId(String customerId);
 
 	Optional<UserDetail> findByEmail(String email);
+
+	Optional<UserDetail> findByClientIdAndEmail(String clientId, String email);
 }

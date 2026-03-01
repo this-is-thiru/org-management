@@ -27,6 +27,7 @@ public class Complaint {
     private Long id;
     private String clientId;
     private String customerId;
+    private String roomNumber;
     private String title;
     private String description;
     private Integer statusId; // complaint_status entity

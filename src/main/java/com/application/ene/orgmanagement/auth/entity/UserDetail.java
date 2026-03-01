@@ -4,10 +4,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 
 @Data
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "uk_client_email", columnNames = {"client_id", "email"}),
+}, indexes = {
+        @Index(name = "idx_client_email", columnList = "client_id,email")
+})
 public class UserDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

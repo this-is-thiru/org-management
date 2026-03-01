@@ -40,7 +40,7 @@ public class AuthService {
 
     public String addUser(RegistrationRequest request) {
 
-        Optional<UserDetail> optionalUserDetails = userDetailsRepo.findByEmail(request.getEmail());
+        Optional<UserDetail> optionalUserDetails = userDetailsRepo.findByClientIdAndEmail(request.getClientId(), request.getEmail());
         if (optionalUserDetails.isPresent()) {
             throw new IllegalArgumentException("User with email " + request.getEmail() + " already exists");
         }

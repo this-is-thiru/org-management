@@ -21,6 +21,7 @@ public class ComplaintManager {
         complaint.setClientId(request.getClientId());
         complaint.setCustomerId(request.getCustomerId());
         complaint.setTitle(request.getTitle());
+        complaint.setRoomNumber(request.getRoomNumber());
         complaint.setDescription(request.getDescription());
         complaint.setStatusId(request.getStatusId());
         complaint.setPriority(request.getPriority());
