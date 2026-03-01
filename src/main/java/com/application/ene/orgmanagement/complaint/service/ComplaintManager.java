@@ -8,6 +8,7 @@ import com.application.ene.orgmanagement.complaint.repository.ComplaintRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class ComplaintManager {
         complaint.setReportedBy(request.getReportedBy());
 
         ComplaintStatusUpdate statusUpdate = ComplaintStatusUpdate.builder().statusId(request.getStatusId()).notes(request.getNotes())
-                .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).updatedBy(request.getReportedBy()).build();
+                .createdAt(Instant.now()).updatedAt(Instant.now()).updatedBy(request.getReportedBy()).build();
         complaint.getStatusUpdates().add(statusUpdate);
 
         var savedComplaint = complaintRepository.save(complaint);
@@ -45,7 +46,7 @@ public class ComplaintManager {
         Complaint complaint = complaintRepository.findById(complaintId).orElseThrow(() -> new RuntimeException("Complaint not found with id: " + complaintId));
         complaint.setStatusId(request.getStatusId());
         ComplaintStatusUpdate statusUpdate = ComplaintStatusUpdate.builder().statusId(request.getStatusId()).notes(request.getNotes())
-                .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).updatedBy(request.getUpdatedBy()).build();
+                .createdAt(Instant.now()).updatedAt(Instant.now()).updatedBy(request.getUpdatedBy()).build();
         complaint.getStatusUpdates().add(statusUpdate);
         complaintRepository.save(complaint);
     }

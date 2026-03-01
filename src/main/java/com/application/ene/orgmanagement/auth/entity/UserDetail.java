@@ -1,6 +1,7 @@
 package com.application.ene.orgmanagement.auth.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -8,6 +9,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
 @Entity
@@ -16,6 +18,7 @@ import lombok.Data;
 }, indexes = {
         @Index(name = "idx_client_email", columnList = "client_id,email")
 })
+@EntityListeners(AuditingEntityListener.class)
 public class UserDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
