@@ -29,11 +29,11 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {
 
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                 loginRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(auth);
         if (authentication.isAuthenticated()) {
-            return authService.generateToken(loginRequest.getEmail(), authentication);
+            return authService.generateToken(loginRequest.getUsername(), authentication);
         } else {
             throw new UsernameNotFoundException("Invalid user request");
         }

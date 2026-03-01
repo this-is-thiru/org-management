@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,10 @@ public class ComplaintManager {
 
         var savedComplaint = complaintRepository.save(complaint);
         return savedComplaint.getId();
+    }
+
+    public List<Complaint> getComplaintsByStatus(String clientId, Integer statusId) {
+        return complaintRepository.findByClientIdAndStatusId(clientId, statusId);
     }
 
     public void updateComplaintStatus(Long complaintId, ComplaintUpdateDto request) {

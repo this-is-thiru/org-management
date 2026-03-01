@@ -35,8 +35,8 @@ public class AuthConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/register", "/helper/**", "/finances/**", "/template/**", "/.well-known/**").permitAll()
-                        .requestMatchers("/auth/**", "/portfolio/**", "/reports/**", "/transactions/**", "/corporate-action/**", "/temporary-transactions/**").authenticated()
+                        .requestMatchers("/auth/login", "/auth/register","/auth/register/client", "/helper/**", "/finances/**", "/template/**", "/.well-known/**").permitAll()
+                        .requestMatchers("/complaints/**", "/complaint-status/**").authenticated()
                         .anyRequest().permitAll())
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())

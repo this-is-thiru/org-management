@@ -45,20 +45,21 @@ public class AuthService {
             throw new IllegalArgumentException("User with email " + request.getEmail() + " already exists");
         }
 
+        String clientId = createClientId(request.getClientId());
         UserDetail userEntity = new UserDetail();
         userEntity.setClientId(request.getClientId());
-        userEntity.setCustomerId(createClientId(request.getClientId()));
+        userEntity.setCustomerId(clientId);
         userEntity.setEmail(request.getEmail());
         userEntity.setPassword(passwordEncoder.encode(request.getPassword()));
         userEntity.setRoles(request.getRole().name());
         userDetailsRepo.save(userEntity);
-        return "user with username " + request.getEmail() + " added to system ";
+        return clientId;
     }
 
     private String createClientId(String clientId) {
         String customerId = LocalDate.now().getYear() + "";
         customerId += clientId.substring(0, 4);
-        String upperCase = UUID.randomUUID().toString().substring(0, 10).toUpperCase();
+        String upperCase = UUID.randomUUID().toString().substring(0, 18).toUpperCase().replaceAll("-", "");
         String tempCustomerId = customerId + upperCase;
 
         Optional<UserDetail> customerDetails = userDetailsRepo.findByCustomerId(tempCustomerId);
