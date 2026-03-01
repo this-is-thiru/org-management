@@ -1,0 +1,12 @@
+package com.application.ene.orgmanagement.complaint.dto.request;
+
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class ComplaintUpdateDto {
+    private int statusId;
+    private String updatedBy;
+    private List<String> notes;
+}

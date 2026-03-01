@@ -1,7 +1,9 @@
 package com.application.ene.orgmanagement.complaint.controller;
 
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintCreationDto;
+import com.application.ene.orgmanagement.complaint.dto.request.ComplaintStatusCreationRequest;
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintUpdateDto;
+import com.application.ene.orgmanagement.complaint.service.ComplainStatusManager;
 import com.application.ene.orgmanagement.complaint.service.ComplaintManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,16 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class ComplaintController {
-    private final ComplaintManager complaintManager;
+public class ComplaintStatusController {
+    private final ComplainStatusManager complaintStatusManager;
 
-    @PostMapping("/complaints/create")
-    public long createComplaint(@RequestBody ComplaintCreationDto request) {
-        return complaintManager.createComplaint(request);
+    @PostMapping("/complaintstatus/create")
+    public void createComplaint(@RequestBody ComplaintStatusCreationRequest request) {
+        complaintStatusManager.createComplaintStatus(request);
     }
 
-    @PutMapping("/complaints/update/{complaintId}")
-    public void createComplaint(@PathVariable Long complaintId, @RequestBody ComplaintUpdateDto request) {
-        complaintManager.updateComplaintStatus(complaintId, request);
-    }
 }
