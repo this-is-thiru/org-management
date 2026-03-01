@@ -3,9 +3,10 @@ package com.application.ene.orgmanagement.notification;
 import com.application.ene.orgmanagement.notification.internal.Notification;
 import com.application.ene.orgmanagement.notification.internal.NotificationType;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.context.event.EventListener;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Service
 @Log4j2

@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableAsync
-//@EnableTransactionManagement
+@EnableTransactionManagement
 @EnableScheduling
 @SpringBootApplication
 public class OrgManagementApplication {

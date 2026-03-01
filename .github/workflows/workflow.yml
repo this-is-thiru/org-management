@@ -1,0 +1,68 @@
+name: Build and Push Docker Image
+
+# 1. ADDED: Trigger on pull requests targeting 'master'
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      # 2. NEW: Step to determine the Docker tag based on the event type
+      - name: Set Docker Image Tag
+        id: set_tag
+        run: |
+          # Define the base image name
+          REPO_IMAGE="tperamasani/org-management"
+
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            # --- Logic for Pull Requests ---
+            # Get the source branch name (head_ref)
+            # 1. Sanitize: remove invalid characters (keep alphanumeric, -, ., _)
+            # 2. Lowercase: convert everything to lowercase
+            # 3. Replace slashes: replace '/' with '-' (e.g., feature/login -> feature-login)
+            BRANCH_REF=$(echo "${{ github.head_ref }}" | tr -dc '[:alnum:]-._/' | tr '[:upper:]' '[:lower:]')
+            TAG_NAME=${BRANCH_REF//\//-}
+
+            echo "::notice file=build_and_push.sh::Pull Request detected. Tagging image with branch name: $TAG_NAME"
+          else
+            # --- Logic for Push to Master (Merge) ---
+            TAG_NAME="latest"
+            echo "::notice file=build_and_push.sh::Push to master detected. Tagging image with: $TAG_NAME"
+          fi
+
+          FULL_TAG="${REPO_IMAGE}:${TAG_NAME}"
+
+          # Set the determined tag and full tag as GitHub output variables for subsequent steps
+          echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "full_tag=$FULL_TAG" >> $GITHUB_OUTPUT
+
+      - name: Login to docker hub
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+
+      # 3. UPDATED: Use the dynamically generated full tag
+      - name: Build docker image
+        run: docker build -t ${{ steps.set_tag.outputs.full_tag }} .
+
+      # 4. UPDATED: Use the dynamically generated full tag
+      - name: Publish image to docker hub
+        run: docker push ${{ steps.set_tag.outputs.full_tag }}
+
+
+# deploy job is commented out and unchanged
+#  deploy:
+#    needs: build
+#    runs-on: self-hosted
+#    steps:
+#      - name: Pull Image from docker hub
+#        run: docker pull tperamasani/org-management:latest
+#      - name: Delete old container
+#        run: docker rm -f org-management-container
+#      - name: Run docker container
+#        run: docker run -d -p 8080:8080 --name org-management-container tperamasani/org-management

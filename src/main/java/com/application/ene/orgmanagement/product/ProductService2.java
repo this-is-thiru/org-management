@@ -13,22 +13,13 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class ProductService {
+public class ProductService2 {
 
-    private final NotificationService notificationService;
     private final ApplicationEventPublisher events;
-    private final ProductService2 productService2;
 
-//    @Scheduled(cron = "*/1 * * * * *")
-//    public void create() {
-//        System.out.println("Hii");
-//        for (int i = 0; i < 10; i++) {
-//            productService2.createProduct();
-//        }
-//
-////        for (int i = 0; i < 10; i++) {
-////            events.publishEvent("Giii");
-////        }
-//    }
+    @Transactional
+    public void createProduct() {
+        events.publishEvent(new NotificationDTO(LocalDate.now(), "SMS", LocalDateTime.now().toString()));
+    }
 
 }
