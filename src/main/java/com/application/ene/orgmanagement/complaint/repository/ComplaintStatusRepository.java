@@ -8,5 +8,7 @@ import java.util.List;
 
 public interface ComplaintStatusRepository extends JpaRepository<ComplaintStatus, Long> {
 //    List<ComplaintStatus> findByClientId(String clientId, Integer statusId);
-    int countByClientId(String clientId);
+//    int countByClientId(String clientId);
+
+    List<ComplaintStatus> findByClientId(String clientId);
 }
