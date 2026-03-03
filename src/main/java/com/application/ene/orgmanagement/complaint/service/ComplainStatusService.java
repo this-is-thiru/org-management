@@ -17,6 +17,7 @@ public class ComplainStatusService {
             throw new ComplaintServiceException("Maximum number of complaint statuses reached for client: " + request.getClientId());
         }
         ComplaintStatus complaintStatus = new ComplaintStatus();
+        complaintStatus.setCurrentStatusId(currentStatusesCount + 1);
         complaintStatus.setClientId(request.getClientId());
         complaintStatus.setTitle(request.getTitle());
         complaintStatus.setName(request.getName());
