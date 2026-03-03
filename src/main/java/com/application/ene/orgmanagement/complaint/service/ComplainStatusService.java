@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ComplainStatusManager {
+public class ComplainStatusService {
     private final ComplaintStatusRepository complaintStatusRepository;
     public void createComplaintStatus(ComplaintStatusCreationRequest request) {
         int currentStatusesCount = complaintStatusRepository.countByClientId(request.getClientId());

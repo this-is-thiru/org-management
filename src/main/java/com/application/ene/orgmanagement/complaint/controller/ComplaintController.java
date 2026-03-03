@@ -3,7 +3,7 @@ package com.application.ene.orgmanagement.complaint.controller;
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintCreationDto;
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintUpdateDto;
 import com.application.ene.orgmanagement.complaint.entity.Complaint;
-import com.application.ene.orgmanagement.complaint.service.ComplaintManager;
+import com.application.ene.orgmanagement.complaint.service.ComplaintService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,20 +19,22 @@ import java.util.List;
 @RequestMapping("complaints")
 @RequiredArgsConstructor
 public class ComplaintController {
-    private final ComplaintManager complaintManager;
+    private final ComplaintService complaintService;
 
-    @PostMapping("/create")
-    public long createComplaint(@RequestBody ComplaintCreationDto request) {
-        return complaintManager.createComplaint(request);
+    @PostMapping("/create/client/{clientId}/customer/{customerId}")
+    public long createComplaint(@PathVariable String clientId, @PathVariable String customerId, @RequestBody ComplaintCreationDto request) {
+        request.setClientId(clientId);
+        request.setCustomerId(customerId);
+        return complaintService.createComplaint(request);
     }
 
-    @GetMapping("/{clientId}/{statusId}")
+    @GetMapping("/client/{clientId}/status/{statusId}")
     public List<Complaint> getComplaintsByStatus(@PathVariable String clientId, @PathVariable Integer statusId) {
-        return complaintManager.getComplaintsByStatus(clientId, statusId);
+        return complaintService.getComplaintsByStatus(clientId, statusId);
     }
 
     @PutMapping("/update/{complaintId}")
     public void createComplaint(@PathVariable Long complaintId, @RequestBody ComplaintUpdateDto request) {
-        complaintManager.updateComplaintStatus(complaintId, request);
+        complaintService.updateComplaintStatus(complaintId, request);
     }
 }

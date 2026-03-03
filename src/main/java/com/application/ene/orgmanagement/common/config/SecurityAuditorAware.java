@@ -1,4 +1,4 @@
-package com.application.ene.orgmanagement.auth.config;
+package com.application.ene.orgmanagement.common.config;
 
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.AuditorAware;

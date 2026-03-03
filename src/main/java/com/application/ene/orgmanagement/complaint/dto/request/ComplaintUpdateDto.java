@@ -7,6 +7,7 @@ import java.util.List;
 @Data
 public class ComplaintUpdateDto {
     private int statusId;
+    private String category;
     private String updatedBy;
     private List<String> notes;
 }

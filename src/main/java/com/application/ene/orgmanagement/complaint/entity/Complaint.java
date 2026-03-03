@@ -18,7 +18,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +32,7 @@ public class Complaint {
     private String customerId;
     private String roomNumber;
     private String title;
+    private String category;
     private String description;
     private Integer statusId; // complaint_status entity
     private String priority;
