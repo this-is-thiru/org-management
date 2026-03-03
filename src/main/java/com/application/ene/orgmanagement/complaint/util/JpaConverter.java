@@ -1,4 +1,4 @@
-package com.application.ene.orgmanagement.common.util;
+package com.application.ene.orgmanagement.complaint.util;
 
 import com.application.ene.orgmanagement.complaint.dto.ComplaintStatusUpdate;
 import jakarta.persistence.AttributeConverter;

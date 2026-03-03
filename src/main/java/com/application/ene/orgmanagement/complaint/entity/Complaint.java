@@ -1,7 +1,7 @@
 package com.application.ene.orgmanagement.complaint.entity;
 
-import com.application.ene.orgmanagement.common.util.JpaConverter;
 import com.application.ene.orgmanagement.complaint.dto.ComplaintStatusUpdate;
+import com.application.ene.orgmanagement.complaint.util.JpaConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
