@@ -1,0 +1,3 @@
+[submodule "api-collection"]
+	path = api-collection
+	url = git@github.com:this-is-thiru/org-management_api-collection.git
