@@ -5,6 +5,7 @@ import com.application.ene.orgmanagement.complaint.dto.ComplaintStatusUpdate;
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintCreationDto;
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintUpdateDto;
 import com.application.ene.orgmanagement.complaint.entity.Complaint;
+import com.application.ene.orgmanagement.complaint.exception.ComplaintServiceException;
 import com.application.ene.orgmanagement.complaint.repository.ComplaintRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class ComplaintService {
+
+    private static final String ESCALATED = "ESCALATED";
 
     private static final Set<String> COMPLAINT_CATEGORIES = Set.of(
             "General", "Electrical", "Water", "Gas", "Heating", "Cooling", "Appliances", "Furniture",
@@ -55,13 +58,27 @@ public class ComplaintService {
     public void updateComplaintStatus(Long complaintId, ComplaintUpdateDto request) {
 
         validateComplaint(request);
-        Complaint complaint = complaintRepository.findById(complaintId).orElseThrow(() -> new RuntimeException("Complaint not found with id: " + complaintId));
+        Complaint complaint = complaintRepository.findById(complaintId).orElseThrow(() -> new ComplaintServiceException("Complaint not found with id: " + complaintId));
         complaint.setStatusId(request.getStatusId());
         complaint.setCategory(request.getCategory());
         ComplaintStatusUpdate statusUpdate = ComplaintStatusUpdate.builder().statusId(request.getStatusId()).notes(request.getNotes())
                 .createdAt(Instant.now()).updatedAt(Instant.now()).updatedBy(securityAuditorAware.getAuditor()).build();
         complaint.getStatusUpdates().add(statusUpdate);
         complaintRepository.save(complaint);
+    }
+
+    public void escalateTo(Long complaintId, ComplaintUpdateDto request) {
+        validateComplaint(request);
+        Complaint complaint = complaintRepository.findById(complaintId).orElseThrow(() -> new ComplaintServiceException("Complaint not found with id: " + complaintId));
+        complaint.setEscalateTo(request.getEscalateTo());
+        ComplaintStatusUpdate statusUpdate = ComplaintStatusUpdate.builder().statusId(request.getStatusId()).status(ESCALATED).notes(request.getNotes())
+                .createdAt(Instant.now()).updatedAt(Instant.now()).updatedBy(securityAuditorAware.getAuditor()).build();
+        complaint.getStatusUpdates().add(statusUpdate);
+        complaintRepository.save(complaint);
+    }
+
+    public List<Complaint> escalatedComplaints(String clientPersonnelId) {
+        return complaintRepository.findByEscalateTo(clientPersonnelId);
     }
 
     private void validateComplaint(ComplaintCreationDto request) {

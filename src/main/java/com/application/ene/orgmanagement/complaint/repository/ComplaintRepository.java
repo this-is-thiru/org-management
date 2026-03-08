@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     List<Complaint> findByClientIdAndStatusId(String clientId, Integer statusId);
+
+    List<Complaint> findByEscalateTo(String personnelId);
 }

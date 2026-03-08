@@ -37,6 +37,7 @@ public class Complaint {
     private Integer statusId; // complaint_status entity
     private String priority;
     private String assignedTo;
+    private String escalateTo;
     private String resolution;
     private String reportedBy;
     @Lob

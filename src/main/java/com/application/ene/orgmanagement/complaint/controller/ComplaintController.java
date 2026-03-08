@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,8 +32,18 @@ public class ComplaintController {
         return complaintService.getComplaintsByStatus(clientId, statusId);
     }
 
-    @PutMapping("/update/{complaintId}")
+    @PostMapping("/update/{complaintId}")
     public void createComplaint(@PathVariable Long complaintId, @RequestBody ComplaintUpdateDto request) {
         complaintService.updateComplaintStatus(complaintId, request);
+    }
+
+    @PostMapping("/escalate-to/{complaintId}")
+    public void escalateTo(@PathVariable Long complaintId, @RequestBody ComplaintUpdateDto request) {
+        complaintService.escalateTo(complaintId, request);
+    }
+
+    @GetMapping("/escalated/complaints/{clientPersonnelId}")
+    public List<Complaint> escalatedComplaints(@PathVariable String clientPersonnelId) {
+        return complaintService.escalatedComplaints(clientPersonnelId);
     }
 }
