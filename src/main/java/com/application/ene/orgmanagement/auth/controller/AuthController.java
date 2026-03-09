@@ -6,10 +6,6 @@ import com.application.ene.orgmanagement.auth.dto.RegistrationRequest;
 import com.application.ene.orgmanagement.auth.dto.RoleUpgradeRequest;
 import com.application.ene.orgmanagement.auth.service.AuthService;
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,19 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
-    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
-                loginRequest.getPassword());
-        Authentication authentication = authenticationManager.authenticate(auth);
-        if (authentication.isAuthenticated()) {
-            return authService.generateToken(loginRequest.getUsername(), authentication);
-        } else {
-            throw new UsernameNotFoundException("Invalid user request");
-        }
+        return authService.login(loginRequest);
     }
 
     @PutMapping("/user/{email}/change/password")

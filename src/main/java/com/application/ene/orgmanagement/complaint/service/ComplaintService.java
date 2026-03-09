@@ -55,6 +55,14 @@ public class ComplaintService {
         return complaintRepository.findByClientIdAndStatusId(clientId, statusId);
     }
 
+    public List<Complaint> getCustomerComplaints(String clientId, String customerId) {
+        return complaintRepository.findByClientIdAndCustomerId(clientId, customerId);
+    }
+
+    public List<Complaint> getClientComplaints(String clientId) {
+        return complaintRepository.findByClientId(clientId);
+    }
+
     public void updateComplaintStatus(Long complaintId, ComplaintUpdateDto request) {
 
         validateComplaint(request);
