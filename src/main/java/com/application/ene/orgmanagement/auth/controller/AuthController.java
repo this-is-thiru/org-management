@@ -5,6 +5,7 @@ import com.application.ene.orgmanagement.auth.dto.LoginResponse;
 import com.application.ene.orgmanagement.auth.dto.RegistrationRequest;
 import com.application.ene.orgmanagement.auth.dto.RoleUpgradeRequest;
 import com.application.ene.orgmanagement.auth.service.AuthService;
+import com.application.ene.orgmanagement.auth.service.AuthServiceHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,10 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final AuthServiceHelper authServiceHelper;
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-        return authService.login(loginRequest);
+        return authServiceHelper.login(loginRequest);
     }
 
     @PutMapping("/user/{email}/change/password")

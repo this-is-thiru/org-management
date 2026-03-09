@@ -2,9 +2,7 @@ package com.application.ene.orgmanagement.auth.service;
 
 
 import com.application.ene.orgmanagement.auth.dto.AuthHelper;
-import com.application.ene.orgmanagement.auth.dto.LoginRequest;
 import com.application.ene.orgmanagement.auth.dto.LoginResponse;
-import com.application.ene.orgmanagement.auth.dto.LoginType;
 import com.application.ene.orgmanagement.auth.dto.RegistrationRequest;
 import com.application.ene.orgmanagement.auth.entity.UserDetail;
 import com.application.ene.orgmanagement.auth.repository.UserDetailsRepository;
@@ -15,8 +13,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,7 +36,6 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsRepository userDetailsRepo;
-    private final AuthenticationManager authenticationManager;
 
     public String addUser(RegistrationRequest request) {
 
@@ -156,37 +151,11 @@ public class AuthService {
         return email + "'s password changed successfully";
     }
 
-    public LoginResponse login(LoginRequest loginRequest) {
-        if (loginRequest.getLoginType() == LoginType.CUSTOMER_ID_PASSWORD) {
-            return authenticateAndGenerateToken(loginRequest.getUsername(), loginRequest.getPassword());
-        }
-
-        if (loginRequest.getLoginType() == LoginType.CLIENT_EMAIL_PASSWORD) {
-            Optional<UserDetail> customerDetail = userDetailsRepo.findByClientIdAndEmail(loginRequest.getClientId(), loginRequest.getEmail());
-            if (customerDetail.isPresent()) {
-                UserDetail userDetail = customerDetail.get();
-                return authenticateAndGenerateToken(userDetail.getCustomerId(), loginRequest.getPassword());
-            }
-        }
-
-        throw new UsernameNotFoundException("Invalid login request");
-    }
-
-    public LoginResponse authenticateAndGenerateToken(String username, String password) {
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, password);
-        Authentication authentication = authenticationManager.authenticate(auth);
-        if (authentication.isAuthenticated()) {
-            return generateToken(username, authentication);
-        } else {
-            throw new UsernameNotFoundException("Invalid login request");
-        }
-    }
-
-    public LoginResponse generateToken(String username, Authentication authentication) {
+    public static LoginResponse generateToken(String username, Authentication authentication) {
         return createToken(username, authentication);
     }
 
-    private LoginResponse createToken(String username, Authentication authentication) {
+    private static LoginResponse createToken(String username, Authentication authentication) {
         int expirationTime = 60 * 30;
         Map<String, Object> claims = new HashMap<>();
         AuthHelper.setRoles(claims, authentication.getAuthorities());
@@ -203,9 +172,8 @@ public class AuthService {
         return LoginResponse.from(token, expirationTime);
     }
 
-    private SecretKey getSignInKey() {
-        byte[] bytes = Base64.getDecoder()
-                .decode(SECRET);
+    private static SecretKey getSignInKey() {
+        byte[] bytes = Base64.getDecoder().decode(SECRET);
         return new SecretKeySpec(bytes, "HmacSHA256");
     }
 }
