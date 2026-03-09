@@ -52,7 +52,7 @@ public class ComplaintController {
         complaintService.escalateTo(complaintId, request);
     }
 
-    @GetMapping("/escalated/customer/{customerId}")
+    @GetMapping("/escalated-to/customer/{customerId}")
     public List<Complaint> escalatedComplaints(@PathVariable String customerId) {
         return complaintService.escalatedComplaints(customerId);
     }

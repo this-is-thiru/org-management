@@ -13,11 +13,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
 @Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(name = "uk_client_email", columnNames = {"client_id", "email"}),
-}, indexes = {
-        @Index(name = "idx_client_email", columnList = "client_id,email")
-})
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_client_email", columnNames = {"client_id", "email"})
+        }
+)
 @EntityListeners(AuditingEntityListener.class)
 public class UserDetail {
     @Id
