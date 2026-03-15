@@ -3,11 +3,14 @@ package com.application.ene.orgmanagement.complaint.service;
 import com.application.ene.orgmanagement.common.config.SecurityAuditorAware;
 import com.application.ene.orgmanagement.common.util.TJsonMapper;
 import com.application.ene.orgmanagement.complaint.dto.ComplaintStatusUpdate;
+import com.application.ene.orgmanagement.complaint.dto.UserDto;
+import com.application.ene.orgmanagement.complaint.dto.proxy.response.UserDetailsResponse;
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintCreationDto;
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintUpdateDto;
 import com.application.ene.orgmanagement.complaint.dto.response.ComplaintResponse;
 import com.application.ene.orgmanagement.complaint.entity.Complaint;
 import com.application.ene.orgmanagement.complaint.exception.ComplaintServiceException;
+import com.application.ene.orgmanagement.complaint.proxy.service.UserServiceClient;
 import com.application.ene.orgmanagement.complaint.repository.ComplaintRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +34,8 @@ public class ComplaintService {
 
     private final ComplaintRepository complaintRepository;
     private final SecurityAuditorAware securityAuditorAware;
+
+    private final UserServiceClient userServiceClient;
 
     public String createComplaint(ComplaintCreationDto request) {
         validateComplaint(request);
@@ -57,10 +63,9 @@ public class ComplaintService {
         return complaintRepository.findByClientIdAndStatusId(clientId, statusId);
     }
 
-    public List<Complaint> getCustomerComplaints(String clientId, String customerId) {
+    public List<ComplaintResponse> getCustomerComplaints(String clientId, String customerId) {
         List<Complaint> customerComplaints = complaintRepository.findByClientIdAndCustomerId(clientId, customerId);
-        return customerComplaints;
-//        customerComplaints.stream().map()
+        return customerComplaints.stream().map(this::getCustomerComplaintResponse).toList();
     }
 
     public List<Complaint> getClientComplaints(String clientId) {
@@ -97,14 +102,23 @@ public class ComplaintService {
         return COMPLAINT_CATEGORIES.stream().toList();
     }
 
-//    public ComplaintResponse getCustomerComplaintResponse(Complaint complaint) {
-//       ComplaintResponse complaintResponse = TJsonMapper.copy(complaint, ComplaintResponse.class);
-//       complaintResponse.setCustomerDetails();
-//       complaintResponse.setAssignedToDetails(TJsonMapper.copy(complaint.getAssignedTo(), CustomerDto.class));
-//       complaintResponse.setEscalateToDetails(TJsonMapper.copy(complaint.getEscalateTo(), CustomerDto.class));
-//       complaintResponse.setReportedByDetails(TJsonMapper.copy(complaint.getReportedBy(), CustomerDto.class));
-//       return complaintResponse;
-//    }
+    public ComplaintResponse getCustomerComplaintResponse(Complaint complaint) {
+       ComplaintResponse complaintResponse = TJsonMapper.copy(complaint, ComplaintResponse.class);
+       complaintResponse.setCustomerDetails(getUserDetails(complaint.getCustomerId()));
+       complaintResponse.setAssignedToDetails(getUserDetails(complaint.getAssignedTo()));
+       complaintResponse.setEscalateToDetails(getUserDetails(complaint.getEscalateTo()));
+       complaintResponse.setReportedByDetails(getUserDetails(complaint.getReportedBy()));
+       return complaintResponse;
+    }
+
+    public UserDto getUserDetails(String customerId) {
+        var userDetails = getCustomerDetails(customerId);
+        return new UserDto(userDetails.getCustomerId(), userDetails.getName());
+    }
+
+    private UserDetailsResponse getCustomerDetails(String customerId) {
+        return userServiceClient.getUserDetailsByCustomerId(customerId);
+    }
 
     private void validateComplaint(ComplaintCreationDto request) {
         if (request.getCategory() != null && !COMPLAINT_CATEGORIES.contains(request.getCategory())) {

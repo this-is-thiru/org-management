@@ -2,6 +2,7 @@ package com.application.ene.orgmanagement.complaint.controller;
 
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintCreationDto;
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintUpdateDto;
+import com.application.ene.orgmanagement.complaint.dto.response.ComplaintResponse;
 import com.application.ene.orgmanagement.complaint.entity.Complaint;
 import com.application.ene.orgmanagement.complaint.service.ComplaintService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class ComplaintController {
     }
 
     @GetMapping("/complaint/client/{clientId}/customer/{customerId}")
-    public List<Complaint> getCustomerComplaints(@PathVariable String clientId, @PathVariable String customerId) {
+    public List<ComplaintResponse> getCustomerComplaints(@PathVariable String clientId, @PathVariable String customerId) {
         return complaintService.getCustomerComplaints(clientId, customerId);
     }
 
