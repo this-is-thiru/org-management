@@ -23,7 +23,7 @@ public class UserDetail {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String clientId = "KANHA1";
-    private String customerId;
+    private String userId;
     private String name;
     private String email;
     private String password;

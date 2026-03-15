@@ -40,7 +40,7 @@ public class ComplaintService {
         validateComplaint(request);
         Complaint complaint = new Complaint();
         complaint.setClientId(request.getClientId());
-        complaint.setCustomerId(request.getCustomerId());
+        complaint.setUserId(request.getUserId());
         complaint.setTitle(request.getTitle());
         complaint.setCategory(request.getCategory());
         complaint.setRoomNumber(request.getRoomNumber());
@@ -63,9 +63,9 @@ public class ComplaintService {
         return getComplaintResponses(complaintsWithStatuses);
     }
 
-    public List<ComplaintResponse> getCustomerComplaints(String clientId, String customerId) {
-        List<Complaint> customerComplaints = complaintRepository.findByClientIdAndCustomerId(clientId, customerId);
-        return getComplaintResponses(customerComplaints);
+    public List<ComplaintResponse> getUserComplaints(String clientId, String userId) {
+        List<Complaint> userComplaints = complaintRepository.findByClientIdAndUserId(clientId, userId);
+        return getComplaintResponses(userComplaints);
     }
 
     public List<ComplaintResponse> getClientComplaints(String clientId) {
@@ -104,28 +104,28 @@ public class ComplaintService {
     }
 
     private List<ComplaintResponse> getComplaintResponses(List<Complaint> complaints) {
-        return complaints.stream().map(this::getCustomerComplaintResponse).toList();
+        return complaints.stream().map(this::getUserComplaintResponse).toList();
     }
 
-    private ComplaintResponse getCustomerComplaintResponse(Complaint complaint) {
+    private ComplaintResponse getUserComplaintResponse(Complaint complaint) {
         ComplaintResponse complaintResponse = TJsonMapper.copy(complaint, ComplaintResponse.class);
-        complaintResponse.setCustomerDetails(getUserDetails(complaint.getCustomerId()));
+        complaintResponse.setUserDetails(getUserDetails(complaint.getUserId()));
         complaintResponse.setAssignedToDetails(getUserDetails(complaint.getAssignedTo()));
         complaintResponse.setEscalateToDetails(getUserDetails(complaint.getEscalateTo()));
         complaintResponse.setReportedByDetails(getUserDetails(complaint.getReportedBy()));
         return complaintResponse;
     }
 
-    public UserDto getUserDetails(String customerId) {
-        var userDetails = getCustomerDetails(customerId);
-        return new UserDto(userDetails.getCustomerId(), userDetails.getName());
+    public UserDto getUserDetails(String userId) {
+        var userDetails = getUserDetail(userId);
+        return new UserDto(userDetails.getUserId(), userDetails.getName());
     }
 
-    private UserDetailsResponse getCustomerDetails(String customerId) {
-        if (customerId == null) {
+    private UserDetailsResponse getUserDetail(String userId) {
+        if (userId == null) {
             return new UserDetailsResponse();
         }
-        return userGateway.getUserDetails(customerId);
+        return userGateway.getUserDetails(userId);
     }
 
     private void validateComplaint(ComplaintCreationDto request) {

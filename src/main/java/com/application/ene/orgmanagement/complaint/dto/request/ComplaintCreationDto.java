@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class ComplaintCreationDto {
     private String clientId;
-    private String customerId;
+    private String userId;
     private String title;
     private String category;
     private String roomNumber;

@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDetailsResponse {
-    private String id;
+//    private String id;
     private String clientId;
-    private String customerId;
+    private String userId;
     private String name;
     private String email;
     private boolean status;

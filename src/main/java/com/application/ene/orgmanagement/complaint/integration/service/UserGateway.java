@@ -15,11 +15,11 @@ public class UserGateway {
 
     @Retry(name = "user-service")
     @CircuitBreaker(name = "user-service", fallbackMethod = "fallback")
-    public UserDetailsResponse getUserDetails(String customerId) {
-        return userClient.getUserDetailsByCustomerId(customerId);
+    public UserDetailsResponse getUserDetails(String userId) {
+        return userClient.getUserDetailsByUserId(userId);
     }
 
-    public UserDetailsResponse fallback(String customerId, Throwable ex) {
+    public UserDetailsResponse fallback(String userId, Throwable ex) {
         UserDetailsResponse response = new UserDetailsResponse();
         response.setName("UNKNOWN");
         return response;

@@ -16,11 +16,11 @@ public class UserService {
 
     private final UserDetailsRepository userDetailsRepo;
 
-    public UserDetail getUserDetailByCustomerId(String customerId) {
-        Optional<UserDetail> customerDetailsOpt = userDetailsRepo.findByCustomerId(customerId);
-        if (customerDetailsOpt.isPresent()) {
-            return customerDetailsOpt.get();
+    public UserDetail getUserDetailByUserId(String userId) {
+        Optional<UserDetail> userDetailOptional = userDetailsRepo.findByUserId(userId);
+        if (userDetailOptional.isPresent()) {
+            return userDetailOptional.get();
         }
-        throw new IllegalArgumentException("User with customerId " + customerId + " not found");
+        throw new IllegalArgumentException("User with userId " + userId + " not found");
     }
 }

@@ -21,10 +21,10 @@ import java.util.List;
 public class ComplaintController {
     private final ComplaintService complaintService;
 
-    @PostMapping("/complaint/create/client/{clientId}/customer/{customerId}")
-    public String createComplaint(@PathVariable String clientId, @PathVariable String customerId, @RequestBody ComplaintCreationDto request) {
+    @PostMapping("/complaint/create/client/{clientId}/user/{userId}")
+    public String createComplaint(@PathVariable String clientId, @PathVariable String userId, @RequestBody ComplaintCreationDto request) {
         request.setClientId(clientId);
-        request.setCustomerId(customerId);
+        request.setUserId(userId);
         return complaintService.createComplaint(request);
     }
 
@@ -43,9 +43,9 @@ public class ComplaintController {
         return complaintService.getComplaintCategories();
     }
 
-    @GetMapping("/complaints/client/{clientId}/customer/{customerId}")
-    public List<ComplaintResponse> getCustomerComplaints(@PathVariable String clientId, @PathVariable String customerId) {
-        return complaintService.getCustomerComplaints(clientId, customerId);
+    @GetMapping("/complaints/client/{clientId}/user/{userId}")
+    public List<ComplaintResponse> getUserComplaints(@PathVariable String clientId, @PathVariable String userId) {
+        return complaintService.getUserComplaints(clientId, userId);
     }
 
     @GetMapping("/complaints/client/{clientId}")
@@ -58,9 +58,9 @@ public class ComplaintController {
         return complaintService.getComplaintsByStatus(clientId, statusId);
     }
 
-    @GetMapping("complaints/escalated-to/customer/{customerId}")
-    public List<Complaint> escalatedComplaints(@PathVariable String customerId) {
-        return complaintService.escalatedComplaints(customerId);
+    @GetMapping("complaints/escalated-to/user/{userId}")
+    public List<Complaint> escalatedComplaints(@PathVariable String userId) {
+        return complaintService.escalatedComplaints(userId);
     }
 
 }

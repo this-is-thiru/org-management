@@ -15,7 +15,7 @@ import java.util.List;
 public class ComplaintResponse {
     private String id;
     private String clientId;
-    private UserDto customerDetails;
+    private UserDto userDetails;
     private String roomNumber;
     private String title;
     private String category;
@@ -28,7 +28,7 @@ public class ComplaintResponse {
     private String resolution;
     private List<ComplaintStatusUpdate> statusUpdates = new ArrayList<>();
     private List<String> tags;
-    private List<String> watchers; // customer ids
+    private List<String> watchers; // user ids
 
     private String createdAt;
     private String updatedAt;
