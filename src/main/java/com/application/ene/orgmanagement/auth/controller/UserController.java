@@ -17,6 +17,9 @@ public class UserController {
 
     @GetMapping("/details/{customerId}")
     public UserDetail getUserDetailsByCustomerId(@PathVariable String customerId) {
-        return userService.getUserDetailByCustomerId(customerId);
+        System.out.println("hiii");
+        throw new RuntimeException("Simulated controller error");
+
+//        return userService.getUserDetailByCustomerId(customerId);
     }
 }

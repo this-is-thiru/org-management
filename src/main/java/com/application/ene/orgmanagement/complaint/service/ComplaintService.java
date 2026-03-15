@@ -10,7 +10,7 @@ import com.application.ene.orgmanagement.complaint.dto.request.ComplaintUpdateDt
 import com.application.ene.orgmanagement.complaint.dto.response.ComplaintResponse;
 import com.application.ene.orgmanagement.complaint.entity.Complaint;
 import com.application.ene.orgmanagement.complaint.exception.ComplaintServiceException;
-import com.application.ene.orgmanagement.complaint.proxy.service.UserServiceClient;
+import com.application.ene.orgmanagement.complaint.integration.service.UserGateway;
 import com.application.ene.orgmanagement.complaint.repository.ComplaintRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +34,7 @@ public class ComplaintService {
     private final ComplaintRepository complaintRepository;
     private final SecurityAuditorAware securityAuditorAware;
 
-    private final UserServiceClient userServiceClient;
+    private final UserGateway userGateway;
 
     public String createComplaint(ComplaintCreationDto request) {
         validateComplaint(request);
@@ -59,17 +58,19 @@ public class ComplaintService {
         return savedComplaint.getId();
     }
 
-    public List<Complaint> getComplaintsByStatus(String clientId, Integer statusId) {
-        return complaintRepository.findByClientIdAndStatusId(clientId, statusId);
+    public List<ComplaintResponse> getComplaintsByStatus(String clientId, Integer statusId) {
+        var complaintsWithStatuses = complaintRepository.findByClientIdAndStatusId(clientId, statusId);
+        return getComplaintResponses(complaintsWithStatuses);
     }
 
     public List<ComplaintResponse> getCustomerComplaints(String clientId, String customerId) {
         List<Complaint> customerComplaints = complaintRepository.findByClientIdAndCustomerId(clientId, customerId);
-        return customerComplaints.stream().map(this::getCustomerComplaintResponse).toList();
+        return getComplaintResponses(customerComplaints);
     }
 
-    public List<Complaint> getClientComplaints(String clientId) {
-        return complaintRepository.findByClientId(clientId);
+    public List<ComplaintResponse> getClientComplaints(String clientId) {
+        List<Complaint> clientComplaints = complaintRepository.findByClientId(clientId);
+        return getComplaintResponses(clientComplaints);
     }
 
     public void updateComplaintStatus(String complaintId, ComplaintUpdateDto request) {
@@ -102,13 +103,17 @@ public class ComplaintService {
         return COMPLAINT_CATEGORIES.stream().toList();
     }
 
-    public ComplaintResponse getCustomerComplaintResponse(Complaint complaint) {
-       ComplaintResponse complaintResponse = TJsonMapper.copy(complaint, ComplaintResponse.class);
-       complaintResponse.setCustomerDetails(getUserDetails(complaint.getCustomerId()));
-       complaintResponse.setAssignedToDetails(getUserDetails(complaint.getAssignedTo()));
-       complaintResponse.setEscalateToDetails(getUserDetails(complaint.getEscalateTo()));
-       complaintResponse.setReportedByDetails(getUserDetails(complaint.getReportedBy()));
-       return complaintResponse;
+    private List<ComplaintResponse> getComplaintResponses(List<Complaint> complaints) {
+        return complaints.stream().map(this::getCustomerComplaintResponse).toList();
+    }
+
+    private ComplaintResponse getCustomerComplaintResponse(Complaint complaint) {
+        ComplaintResponse complaintResponse = TJsonMapper.copy(complaint, ComplaintResponse.class);
+        complaintResponse.setCustomerDetails(getUserDetails(complaint.getCustomerId()));
+        complaintResponse.setAssignedToDetails(getUserDetails(complaint.getAssignedTo()));
+        complaintResponse.setEscalateToDetails(getUserDetails(complaint.getEscalateTo()));
+        complaintResponse.setReportedByDetails(getUserDetails(complaint.getReportedBy()));
+        return complaintResponse;
     }
 
     public UserDto getUserDetails(String customerId) {
@@ -117,7 +122,10 @@ public class ComplaintService {
     }
 
     private UserDetailsResponse getCustomerDetails(String customerId) {
-        return userServiceClient.getUserDetailsByCustomerId(customerId);
+        if (customerId == null) {
+            return new UserDetailsResponse();
+        }
+        return userGateway.getUserDetails(customerId);
     }
 
     private void validateComplaint(ComplaintCreationDto request) {

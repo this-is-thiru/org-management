@@ -49,12 +49,12 @@ public class ComplaintController {
     }
 
     @GetMapping("/complaints/client/{clientId}")
-    public List<Complaint> getClientsComplaints(@PathVariable String clientId) {
+    public List<ComplaintResponse> getClientsComplaints(@PathVariable String clientId) {
         return complaintService.getClientComplaints(clientId);
     }
 
     @GetMapping("/complaints/client/{clientId}/status/{statusId}")
-    public List<Complaint> getComplaintsByStatus(@PathVariable String clientId, @PathVariable Integer statusId) {
+    public List<ComplaintResponse> getComplaintsByStatus(@PathVariable String clientId, @PathVariable Integer statusId) {
         return complaintService.getComplaintsByStatus(clientId, statusId);
     }
 
