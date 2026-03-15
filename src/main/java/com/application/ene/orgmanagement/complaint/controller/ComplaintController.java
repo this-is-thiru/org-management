@@ -2,6 +2,7 @@ package com.application.ene.orgmanagement.complaint.controller;
 
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintCreationDto;
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintUpdateDto;
+import com.application.ene.orgmanagement.complaint.dto.response.ComplaintResponse;
 import com.application.ene.orgmanagement.complaint.entity.Complaint;
 import com.application.ene.orgmanagement.complaint.service.ComplaintService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class ComplaintController {
     private final ComplaintService complaintService;
 
     @PostMapping("/create/client/{clientId}/customer/{customerId}")
-    public long createComplaint(@PathVariable String clientId, @PathVariable String customerId, @RequestBody ComplaintCreationDto request) {
+    public String createComplaint(@PathVariable String clientId, @PathVariable String customerId, @RequestBody ComplaintCreationDto request) {
         request.setClientId(clientId);
         request.setCustomerId(customerId);
         return complaintService.createComplaint(request);
@@ -43,17 +44,22 @@ public class ComplaintController {
     }
 
     @PostMapping("/update/complaint/{complaintId}")
-    public void createComplaint(@PathVariable Long complaintId, @RequestBody ComplaintUpdateDto request) {
+    public void updateComplaintStatus(@PathVariable String complaintId, @RequestBody ComplaintUpdateDto request) {
         complaintService.updateComplaintStatus(complaintId, request);
     }
 
     @PostMapping("/escalate-to/complaint/{complaintId}")
-    public void escalateTo(@PathVariable Long complaintId, @RequestBody ComplaintUpdateDto request) {
+    public void escalateTo(@PathVariable String complaintId, @RequestBody ComplaintUpdateDto request) {
         complaintService.escalateTo(complaintId, request);
     }
 
     @GetMapping("/escalated-to/customer/{customerId}")
     public List<Complaint> escalatedComplaints(@PathVariable String customerId) {
         return complaintService.escalatedComplaints(customerId);
+    }
+
+    @GetMapping("/complaint/categories/all")
+    public List<String> getComplaintCategories() {
+        return complaintService.getComplaintCategories();
     }
 }

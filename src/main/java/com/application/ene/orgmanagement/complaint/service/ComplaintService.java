@@ -1,9 +1,11 @@
 package com.application.ene.orgmanagement.complaint.service;
 
 import com.application.ene.orgmanagement.common.config.SecurityAuditorAware;
+import com.application.ene.orgmanagement.common.util.TJsonMapper;
 import com.application.ene.orgmanagement.complaint.dto.ComplaintStatusUpdate;
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintCreationDto;
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintUpdateDto;
+import com.application.ene.orgmanagement.complaint.dto.response.ComplaintResponse;
 import com.application.ene.orgmanagement.complaint.entity.Complaint;
 import com.application.ene.orgmanagement.complaint.exception.ComplaintServiceException;
 import com.application.ene.orgmanagement.complaint.repository.ComplaintRepository;
@@ -29,7 +31,7 @@ public class ComplaintService {
     private final ComplaintRepository complaintRepository;
     private final SecurityAuditorAware securityAuditorAware;
 
-    public long createComplaint(ComplaintCreationDto request) {
+    public String createComplaint(ComplaintCreationDto request) {
         validateComplaint(request);
         Complaint complaint = new Complaint();
         complaint.setClientId(request.getClientId());
@@ -56,14 +58,16 @@ public class ComplaintService {
     }
 
     public List<Complaint> getCustomerComplaints(String clientId, String customerId) {
-        return complaintRepository.findByClientIdAndCustomerId(clientId, customerId);
+        List<Complaint> customerComplaints = complaintRepository.findByClientIdAndCustomerId(clientId, customerId);
+        return customerComplaints;
+//        customerComplaints.stream().map()
     }
 
     public List<Complaint> getClientComplaints(String clientId) {
         return complaintRepository.findByClientId(clientId);
     }
 
-    public void updateComplaintStatus(Long complaintId, ComplaintUpdateDto request) {
+    public void updateComplaintStatus(String complaintId, ComplaintUpdateDto request) {
 
         validateComplaint(request);
         Complaint complaint = complaintRepository.findById(complaintId).orElseThrow(() -> new ComplaintServiceException("Complaint not found with id: " + complaintId));
@@ -75,7 +79,7 @@ public class ComplaintService {
         complaintRepository.save(complaint);
     }
 
-    public void escalateTo(Long complaintId, ComplaintUpdateDto request) {
+    public void escalateTo(String complaintId, ComplaintUpdateDto request) {
         validateComplaint(request);
         Complaint complaint = complaintRepository.findById(complaintId).orElseThrow(() -> new ComplaintServiceException("Complaint not found with id: " + complaintId));
         complaint.setEscalateTo(request.getEscalateTo());
@@ -88,6 +92,19 @@ public class ComplaintService {
     public List<Complaint> escalatedComplaints(String clientPersonnelId) {
         return complaintRepository.findByEscalateTo(clientPersonnelId);
     }
+
+    public List<String> getComplaintCategories() {
+        return COMPLAINT_CATEGORIES.stream().toList();
+    }
+
+//    public ComplaintResponse getCustomerComplaintResponse(Complaint complaint) {
+//       ComplaintResponse complaintResponse = TJsonMapper.copy(complaint, ComplaintResponse.class);
+//       complaintResponse.setCustomerDetails();
+//       complaintResponse.setAssignedToDetails(TJsonMapper.copy(complaint.getAssignedTo(), CustomerDto.class));
+//       complaintResponse.setEscalateToDetails(TJsonMapper.copy(complaint.getEscalateTo(), CustomerDto.class));
+//       complaintResponse.setReportedByDetails(TJsonMapper.copy(complaint.getReportedBy(), CustomerDto.class));
+//       return complaintResponse;
+//    }
 
     private void validateComplaint(ComplaintCreationDto request) {
         if (request.getCategory() != null && !COMPLAINT_CATEGORIES.contains(request.getCategory())) {

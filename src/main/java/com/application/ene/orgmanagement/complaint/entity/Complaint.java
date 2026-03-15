@@ -26,8 +26,8 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class Complaint {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
     private String clientId;
     private String customerId;
     private String roomNumber;
