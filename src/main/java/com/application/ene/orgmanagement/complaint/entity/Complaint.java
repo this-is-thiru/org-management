@@ -26,10 +26,10 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class Complaint {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
     private String clientId;
-    private String customerId;
+    private String userId;
     private String roomNumber;
     private String title;
     private String category;
@@ -52,7 +52,7 @@ public class Complaint {
     @Lob
     @Column(columnDefinition = "BLOB")
     @Convert(converter = JpaConverter.StringListToJsonBlobConverter.class)
-    private List<String> watchers; // customer ids
+    private List<String> watchers; // user ids
 
     @CreatedDate
     private Instant createdAt;

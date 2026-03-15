@@ -1,21 +1,24 @@
 package com.application.ene.orgmanagement.common.util;
 
 import io.micrometer.common.util.StringUtils;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import tools.jackson.databind.JavaType;
-import tools.jackson.databind.cfg.DateTimeFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 
 
+@Component
+@RequiredArgsConstructor
 public class TJsonMapper {
 
-    private static final JsonMapper JSON_MAPPER = getJsonMapper();
+    private static JsonMapper JSON_MAPPER;
 
-    private static JsonMapper getJsonMapper() {
-        return JsonMapper.builder()
-                .enable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .build();
+    @Autowired
+    public TJsonMapper(JsonMapper jsonMapper) {
+        TJsonMapper.JSON_MAPPER = jsonMapper;
     }
 
     public static <T> T copy(Object source, Class<T> targetClass) {

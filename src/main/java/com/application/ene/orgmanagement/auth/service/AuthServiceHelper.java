@@ -26,15 +26,15 @@ public class AuthServiceHelper {
 
 
     public LoginResponse login(LoginRequest loginRequest) {
-        if (loginRequest.getLoginType() == LoginType.CUSTOMER_ID_PASSWORD) {
+        if (loginRequest.getLoginType() == LoginType.USER_ID_PASSWORD) {
             return authenticateAndGenerateToken(loginRequest.getUsername(), loginRequest.getPassword());
         }
 
         if (loginRequest.getLoginType() == LoginType.CLIENT_EMAIL_PASSWORD) {
-            Optional<UserDetail> customerDetail = userDetailsRepo.findByClientIdAndEmail(loginRequest.getClientId(), loginRequest.getEmail());
-            if (customerDetail.isPresent()) {
-                UserDetail userDetail = customerDetail.get();
-                return authenticateAndGenerateToken(userDetail.getCustomerId(), loginRequest.getPassword());
+            Optional<UserDetail> userDetailOptional = userDetailsRepo.findByClientIdAndEmail(loginRequest.getClientId(), loginRequest.getEmail());
+            if (userDetailOptional.isPresent()) {
+                UserDetail userDetail = userDetailOptional.get();
+                return authenticateAndGenerateToken(userDetail.getUserId(), loginRequest.getPassword());
             }
         }
 

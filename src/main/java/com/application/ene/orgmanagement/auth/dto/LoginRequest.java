@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class LoginRequest {
-	private LoginType loginType = LoginType.CUSTOMER_ID_PASSWORD;
+	private LoginType loginType = LoginType.USER_ID_PASSWORD;
 	private String clientId;
 	private String email;
 	private String username;

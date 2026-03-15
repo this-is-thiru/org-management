@@ -44,28 +44,28 @@ public class AuthService {
             throw new IllegalArgumentException("User with email " + request.getEmail() + " already exists");
         }
 
-        String clientId = createClientId(request.getClientId());
+        String userId = createClientId(request.getClientId());
         UserDetail userEntity = new UserDetail();
         userEntity.setClientId(request.getClientId());
-        userEntity.setCustomerId(clientId);
+        userEntity.setUserId(userId);
         userEntity.setEmail(request.getEmail());
         userEntity.setPassword(passwordEncoder.encode(request.getPassword()));
         userEntity.setRoles(request.getRole().name());
         userDetailsRepo.save(userEntity);
-        return clientId;
+        return userId;
     }
 
     private String createClientId(String clientId) {
-        String customerId = LocalDate.now().getYear() + "";
-        customerId += clientId.substring(0, 4);
+        String userId = LocalDate.now().getYear() + "";
+        userId += clientId.substring(0, 4);
         String upperCase = UUID.randomUUID().toString().substring(0, 18).toUpperCase().replaceAll("-", "");
-        String tempCustomerId = customerId + upperCase;
+        String tempUserId = userId + upperCase;
 
-        Optional<UserDetail> customerDetails = userDetailsRepo.findByCustomerId(tempCustomerId);
-        if (customerDetails.isPresent()) {
+        Optional<UserDetail> userDetails = userDetailsRepo.findByUserId(tempUserId);
+        if (userDetails.isPresent()) {
             return createClientId(clientId);
         }
-        return tempCustomerId;
+        return tempUserId;
     }
 
 
@@ -169,7 +169,7 @@ public class AuthService {
                 .signWith(getSignInKey())
                 .compact();
 
-        return LoginResponse.from(token, expirationTime);
+        return LoginResponse.from(token, username, expirationTime);
     }
 
     private static SecretKey getSignInKey() {

@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("complaint-status")
+@RequestMapping("complaint-service")
 @RequiredArgsConstructor
 public class ComplaintStatusController {
     private final ComplainStatusService complaintStatusManager;
 
-    @PostMapping("/create/client/{clientId}")
+    @PostMapping("/complaint-status/create/client/{clientId}")
     public void createComplaintStatus(@PathVariable String clientId, @RequestBody ComplaintStatusCreationRequest request) {
         request.setClientId(clientId);
         complaintStatusManager.createComplaintStatus(request);
     }
 
-    @GetMapping("/all/client/{clientId}")
+    @GetMapping("/complaint-status/all/client/{clientId}")
     public List<ComplaintStatus> getClientComplaintStatuses(@PathVariable String clientId) {
         return complaintStatusManager.getClientComplaintStatuses(clientId);
     }
