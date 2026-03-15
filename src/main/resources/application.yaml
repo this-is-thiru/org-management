@@ -10,6 +10,10 @@ spring:
       circuitbreaker:
         enabled: true
 
+services:
+  user:
+    url: http://localhost:8080/user-service
+
 resilience4j:
   retry:
     configs:

@@ -2,7 +2,6 @@ package com.application.ene.orgmanagement.complaint.controller;
 
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintCreationDto;
 import com.application.ene.orgmanagement.complaint.dto.request.ComplaintUpdateDto;
-import com.application.ene.orgmanagement.complaint.dto.response.ComplaintResponse;
 import com.application.ene.orgmanagement.complaint.entity.Complaint;
 import com.application.ene.orgmanagement.complaint.service.ComplaintService;
 import lombok.RequiredArgsConstructor;
@@ -16,50 +15,51 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("complaints")
+@RequestMapping("complaint-service")
 @RequiredArgsConstructor
 public class ComplaintController {
     private final ComplaintService complaintService;
 
-    @PostMapping("/create/client/{clientId}/customer/{customerId}")
+    @PostMapping("/complaint/create/client/{clientId}/customer/{customerId}")
     public String createComplaint(@PathVariable String clientId, @PathVariable String customerId, @RequestBody ComplaintCreationDto request) {
         request.setClientId(clientId);
         request.setCustomerId(customerId);
         return complaintService.createComplaint(request);
     }
 
-    @GetMapping("/client/{clientId}/status/{statusId}")
-    public List<Complaint> getComplaintsByStatus(@PathVariable String clientId, @PathVariable Integer statusId) {
-        return complaintService.getComplaintsByStatus(clientId, statusId);
-    }
-
-    @GetMapping("/all/client/{clientId}/customer/{customerId}")
+    @GetMapping("/complaint/client/{clientId}/customer/{customerId}")
     public List<Complaint> getCustomerComplaints(@PathVariable String clientId, @PathVariable String customerId) {
         return complaintService.getCustomerComplaints(clientId, customerId);
     }
 
-    @GetMapping("/all/client/{clientId}")
+    @GetMapping("/complaint/client/{clientId}")
     public List<Complaint> getClientsComplaints(@PathVariable String clientId) {
         return complaintService.getClientComplaints(clientId);
     }
 
-    @PostMapping("/update/complaint/{complaintId}")
+    @PostMapping("/complaint/update/{complaintId}")
     public void updateComplaintStatus(@PathVariable String complaintId, @RequestBody ComplaintUpdateDto request) {
         complaintService.updateComplaintStatus(complaintId, request);
     }
 
-    @PostMapping("/escalate-to/complaint/{complaintId}")
+    @PostMapping("/complaint/escalate-to/{complaintId}")
     public void escalateTo(@PathVariable String complaintId, @RequestBody ComplaintUpdateDto request) {
         complaintService.escalateTo(complaintId, request);
-    }
-
-    @GetMapping("/escalated-to/customer/{customerId}")
-    public List<Complaint> escalatedComplaints(@PathVariable String customerId) {
-        return complaintService.escalatedComplaints(customerId);
     }
 
     @GetMapping("/complaint/categories/all")
     public List<String> getComplaintCategories() {
         return complaintService.getComplaintCategories();
     }
+
+    @GetMapping("/complaints/client/{clientId}/status/{statusId}")
+    public List<Complaint> getComplaintsByStatus(@PathVariable String clientId, @PathVariable Integer statusId) {
+        return complaintService.getComplaintsByStatus(clientId, statusId);
+    }
+
+    @GetMapping("complaints/escalated-to/customer/{customerId}")
+    public List<Complaint> escalatedComplaints(@PathVariable String customerId) {
+        return complaintService.escalatedComplaints(customerId);
+    }
+
 }
