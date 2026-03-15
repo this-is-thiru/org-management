@@ -7,6 +7,7 @@ import lombok.Data;
 @AllArgsConstructor(staticName = "from")
 public class LoginResponse {
 	private String access_token;
+	private String customerId;
 	private int expires_in;
 	private final String tokenType = "Bearer";
 }

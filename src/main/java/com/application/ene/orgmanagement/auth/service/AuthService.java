@@ -169,7 +169,7 @@ public class AuthService {
                 .signWith(getSignInKey())
                 .compact();
 
-        return LoginResponse.from(token, expirationTime);
+        return LoginResponse.from(token, username, expirationTime);
     }
 
     private static SecretKey getSignInKey() {
