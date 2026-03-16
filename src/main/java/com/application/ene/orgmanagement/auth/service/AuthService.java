@@ -77,19 +77,22 @@ public class AuthService {
      * @return a success message
      * @throws IllegalArgumentException if the user already exists
      */
-    public String upgradeRole(RegistrationRequest request) {
-
-        Optional<UserDetail> optionalUserDetails = userDetailsRepo.findByEmail(request.getEmail());
-        if (optionalUserDetails.isPresent()) {
-            throw new IllegalArgumentException("User with email " + request.getEmail() + " already exists");
+    public String upgradeRole(String userId, RegistrationRequest request) {
+        Optional<UserDetail> optionalUserDetails = userDetailsRepo.findByUserId(userId);
+        if (optionalUserDetails.isEmpty()) {
+            throw new IllegalArgumentException("User with userId " + request.getEmail() + " not exists");
         }
 
-        UserDetail userEntity = new UserDetail();
-        userEntity.setEmail(request.getEmail());
-        userEntity.setPassword(passwordEncoder.encode(request.getPassword()));
-        userEntity.setRoles(request.getRole().name());
-        userDetailsRepo.save(userEntity);
-        return "user with username " + request.getEmail() + " added to system";
+        UserDetail userEntity = optionalUserDetails.get();
+        boolean canUpgradeRole = AuthHelper.canUpgradeRole(userEntity.getRoles(), request.getRole());
+        if (canUpgradeRole) {
+            String oldRoles = userEntity.getRoles();
+            String roles = oldRoles + "," + request.getRole().name();
+            userEntity.setRoles(roles);
+            userDetailsRepo.save(userEntity);
+            return "Role: " + request.getRole() + "added for the user: " + userId;
+        }
+        return "Not eligible for the role upgrade.";
     }
 
     /**

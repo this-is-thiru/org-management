@@ -35,9 +35,20 @@ public class AuthHelper {
         roleHierarchy.put(Role.EDITOR, List.of(Role.AUTHOR, Role.MODERATOR, Role.USER, Role.GUEST));
     }
 
-    public static boolean canUpgradeRole(Role currentRole, Role newRole) {
-        List<Role> hierarchy = roleHierarchy.get(currentRole);
-        return hierarchy.contains(newRole);
+    public static boolean canUpgradeRole(String currentPersonRoles, Role newPersonRole) {
+        var currentPersonRolesTemp = currentPersonRoles.split(",");
+        for (String role: currentPersonRolesTemp) {
+            boolean canUpgrade = canUpgradeRole(Role.valueOf(role), newPersonRole);
+            if (canUpgrade) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean canUpgradeRole(Role currentPersonRole, Role newPersonRole) {
+        List<Role> hierarchy = roleHierarchy.get(currentPersonRole);
+        return hierarchy.contains(newPersonRole);
     }
 
     public static String getRole(Role role) {
