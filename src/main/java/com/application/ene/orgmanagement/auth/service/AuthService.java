@@ -80,10 +80,15 @@ public class AuthService {
     public String upgradeRole(String userId, RegistrationRequest request) {
         Optional<UserDetail> optionalUserDetails = userDetailsRepo.findByUserId(userId);
         if (optionalUserDetails.isEmpty()) {
-            throw new IllegalArgumentException("User with userId " + request.getEmail() + " not exists");
+            throw new IllegalArgumentException("User with userId " + userId + " not exists");
         }
 
-        UserDetail userEntity = optionalUserDetails.get();
+        Optional<UserDetail> optionalNewUserDetails = userDetailsRepo.findByUserId(request.getNewUserId());
+        if (optionalNewUserDetails.isEmpty()) {
+            throw new IllegalArgumentException("User with userId " + request.getNewUserId() + " not exists");
+        }
+
+        UserDetail userEntity = optionalNewUserDetails.get();
         boolean canUpgradeRole = AuthHelper.canUpgradeRole(userEntity.getRoles(), request.getRole());
         if (canUpgradeRole) {
             String oldRoles = userEntity.getRoles();
