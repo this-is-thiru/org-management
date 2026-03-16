@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.Version;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -26,7 +27,11 @@ public class UserDetail {
     private String userId;
     private String name;
     private String email;
+    private String mobileNumber;
     private String password;
-    private boolean status;
+    private boolean status = true;
     private String roles;
+
+    @Version
+    private int version;
 }
