@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class RegistrationRequest {
 	private String clientId = "KANHA1";
+	private String newUserId;
 	private String email;
 	private String password;
 	private String newPassword;
