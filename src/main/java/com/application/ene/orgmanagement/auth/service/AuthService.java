@@ -89,7 +89,7 @@ public class AuthService {
         }
 
         UserDetail userEntity = optionalNewUserDetails.get();
-        boolean canUpgradeRole = AuthHelper.canUpgradeRole(userEntity.getRoles(), request.getRole());
+        boolean canUpgradeRole = AuthHelper.canUpgradeRole(optionalUserDetails.get().getRoles(), request.getRole());
         if (canUpgradeRole) {
             String oldRoles = userEntity.getRoles();
             String roles = oldRoles + "," + request.getRole().name();
