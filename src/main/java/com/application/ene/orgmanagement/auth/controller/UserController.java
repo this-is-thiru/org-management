@@ -32,7 +32,7 @@ public class UserController {
         userService.updateUserDetails(userId, request);
     }
 
-    @PostMapping("/upgrade/role/{userId}")
+    @PostMapping("/upgrade/user/{userId}")
     public String updateUserRole(@PathVariable String userId, @RequestBody RegistrationRequest request) {
         return authService.upgradeRole(userId, request);
     }
