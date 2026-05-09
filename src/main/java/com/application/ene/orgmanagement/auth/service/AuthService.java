@@ -4,6 +4,7 @@ package com.application.ene.orgmanagement.auth.service;
 import com.application.ene.orgmanagement.auth.dto.AuthHelper;
 import com.application.ene.orgmanagement.auth.dto.LoginResponse;
 import com.application.ene.orgmanagement.auth.dto.RegistrationRequest;
+import com.application.ene.orgmanagement.auth.dto.UserIdDto;
 import com.application.ene.orgmanagement.auth.entity.ClientPersonnelDetail;
 import com.application.ene.orgmanagement.auth.entity.UserDetail;
 import com.application.ene.orgmanagement.auth.repository.ClientPersonnelDetailsRepository;
@@ -41,7 +42,7 @@ public class AuthService {
     private final UserDetailsRepository userDetailsRepo;
     private final ClientPersonnelDetailsRepository clientPersonnelDetailsRepository;
 
-    public String addUser(RegistrationRequest request) {
+    public UserIdDto addUser(RegistrationRequest request) {
 
         Optional<UserDetail> optionalUserDetails = userDetailsRepo.findByClientIdAndEmail(request.getClientId(), request.getEmail());
         if (optionalUserDetails.isPresent()) {
@@ -56,10 +57,11 @@ public class AuthService {
         userEntity.setPassword(passwordEncoder.encode(request.getPassword()));
         userEntity.setRoles(request.getRole().name());
         userDetailsRepo.save(userEntity);
-        return userId;
+
+        return new UserIdDto(userId);
     }
 
-    public String addEmployee(RegistrationRequest request) {
+    public UserIdDto addEmployee(RegistrationRequest request) {
 
         Optional<ClientPersonnelDetail> optionalUserDetails = clientPersonnelDetailsRepository.findByClientIdAndEmail(request.getClientId(), request.getEmail());
         if (optionalUserDetails.isPresent()) {
@@ -74,7 +76,7 @@ public class AuthService {
         personnelDetail.setPassword(passwordEncoder.encode(request.getPassword()));
         personnelDetail.setRoles(request.getRole().name());
         clientPersonnelDetailsRepository.save(personnelDetail);
-        return userId;
+        return new UserIdDto(userId);
     }
 
     public List<ClientPersonnelDetail> getAllEmployees(String clientId) {

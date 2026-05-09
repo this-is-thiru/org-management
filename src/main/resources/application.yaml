@@ -8,6 +8,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+#      ddl-auto: create-only
 
   cloud:
     openfeign:
@@ -41,9 +42,6 @@ resilience4j:
     instances:
       user-service:
         base-config: default
-#  jpa:
-#    hibernate:
-#      ddl-auto: create-only
 
 
 
