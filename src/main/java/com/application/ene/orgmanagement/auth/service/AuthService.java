@@ -202,11 +202,11 @@ public class AuthService {
         return email + "'s password changed successfully";
     }
 
-    public static LoginResponse generateToken(String username, Authentication authentication) {
-        return createToken(username, authentication);
+    public static LoginResponse generateToken(UserDetail userDetail, Authentication authentication) {
+        return createToken(userDetail, authentication);
     }
 
-    private static LoginResponse createToken(String username, Authentication authentication) {
+    private static LoginResponse createToken(UserDetail userDetail, Authentication authentication) {
         int expirationTime = 60 * 30;
         Map<String, Object> claims = new HashMap<>();
         AuthHelper.setRoles(claims, authentication.getAuthorities());
@@ -214,13 +214,13 @@ public class AuthService {
 
         String token = Jwts.builder()
                 .claims(claims)
-                .subject(username)
+                .subject(userDetail.getUserId())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(expiration)
                 .signWith(getSignInKey())
                 .compact();
 
-        return LoginResponse.from(token, username, expirationTime);
+        return LoginResponse.from(userDetail.getUserId(), userDetail.getName(), token, expirationTime);
     }
 
     private static SecretKey getSignInKey() {
