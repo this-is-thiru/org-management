@@ -53,6 +53,7 @@ public class AuthService {
         UserDetail userEntity = new UserDetail();
         userEntity.setClientId(request.getClientId());
         userEntity.setUserId(userId);
+        userEntity.setName(request.getName());
         userEntity.setEmail(request.getEmail());
         userEntity.setPassword(passwordEncoder.encode(request.getPassword()));
         userEntity.setRoles(request.getRole().name());
@@ -72,6 +73,7 @@ public class AuthService {
         ClientPersonnelDetail personnelDetail = new ClientPersonnelDetail();
         personnelDetail.setClientId(request.getClientId());
         personnelDetail.setUserId(userId);
+        personnelDetail.setName(request.getName());
         personnelDetail.setEmail(request.getEmail());
         personnelDetail.setPassword(passwordEncoder.encode(request.getPassword()));
         personnelDetail.setRoles(request.getRole().name());

@@ -6,6 +6,7 @@ import lombok.Data;
 public class RegistrationRequest {
 	private String clientId = "KANHA1";
 	private String newUserId;
+	private String name;
 	private String email;
 	private String password;
 	private String newPassword;
