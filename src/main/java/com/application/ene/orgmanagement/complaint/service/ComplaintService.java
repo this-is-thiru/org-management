@@ -110,8 +110,8 @@ public class ComplaintService {
     private ComplaintResponse getUserComplaintResponse(Complaint complaint) {
         ComplaintResponse complaintResponse = TJsonMapper.copy(complaint, ComplaintResponse.class);
         complaintResponse.setUserDetails(getUserDetails(complaint.getUserId()));
-        complaintResponse.setAssignedToDetails(getUserDetails(complaint.getAssignedTo()));
-        complaintResponse.setEscalateToDetails(getUserDetails(complaint.getEscalateTo()));
+        complaintResponse.setAssignedToDetails(getEmployeeDetails(complaint.getAssignedTo()));
+        complaintResponse.setEscalateToDetails(getEmployeeDetails(complaint.getEscalateTo()));
         complaintResponse.setReportedByDetails(getUserDetails(complaint.getReportedBy()));
         return complaintResponse;
     }
@@ -121,11 +121,23 @@ public class ComplaintService {
         return new UserDto(userDetails.getUserId(), userDetails.getName());
     }
 
+    public UserDto getEmployeeDetails(String userId) {
+        var userDetails = getEmployeeDetail(userId);
+        return new UserDto(userDetails.getUserId(), userDetails.getName());
+    }
+
     private UserDetailsResponse getUserDetail(String userId) {
         if (userId == null) {
             return new UserDetailsResponse();
         }
         return userGateway.getUserDetails(userId);
+    }
+
+    private UserDetailsResponse getEmployeeDetail(String userId) {
+        if (userId == null) {
+            return new UserDetailsResponse();
+        }
+        return userGateway.getEmployeeDetails(userId);
     }
 
     private void validateComplaint(ComplaintCreationDto request) {

@@ -19,6 +19,12 @@ public class UserGateway {
         return userClient.getUserDetailsByUserId(userId);
     }
 
+    @Retry(name = "user-service")
+    @CircuitBreaker(name = "user-service", fallbackMethod = "fallback")
+    public UserDetailsResponse getEmployeeDetails(String userId) {
+        return userClient.getEmployeeDetailsByUserId(userId);
+    }
+
     public UserDetailsResponse fallback(String userId, Throwable ex) {
         UserDetailsResponse response = new UserDetailsResponse();
         response.setName("UNKNOWN");
