@@ -38,6 +38,11 @@ public class ComplaintController {
         complaintService.escalateTo(complaintId, request);
     }
 
+    @PostMapping("/complaint/assign-to/{complaintId}")
+    public void assignTo(@PathVariable String complaintId, @RequestBody ComplaintUpdateDto request) {
+        complaintService.assignTo(complaintId, request);
+    }
+
     @GetMapping("/complaint/categories/all")
     public List<String> getComplaintCategories() {
         return complaintService.getComplaintCategories();

@@ -95,6 +95,16 @@ public class ComplaintService {
         complaintRepository.save(complaint);
     }
 
+    public void assignTo(String complaintId, ComplaintUpdateDto request) {
+        validateComplaint(request);
+        Complaint complaint = complaintRepository.findById(complaintId).orElseThrow(() -> new ComplaintServiceException("Complaint not found with id: " + complaintId));
+        complaint.setAssignedTo(request.getAssignTo());
+        ComplaintStatusUpdate statusUpdate = ComplaintStatusUpdate.builder().statusId(request.getStatusId()).status("UPDATED").notes(request.getNotes())
+                .createdAt(Instant.now()).updatedAt(Instant.now()).updatedBy(securityAuditorAware.getAuditor()).build();
+        complaint.getStatusUpdates().add(statusUpdate);
+        complaintRepository.save(complaint);
+    }
+
     public List<Complaint> escalatedComplaints(String clientPersonnelId) {
         return complaintRepository.findByEscalateTo(clientPersonnelId);
     }
