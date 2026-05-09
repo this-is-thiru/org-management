@@ -63,6 +63,14 @@ public class ComplaintService {
         return getComplaintResponses(complaintsWithStatuses);
     }
 
+    public ComplaintResponse getComplaintById(String complaintId) {
+        var complaintOptional = complaintRepository.findById(complaintId);
+        if (complaintOptional.isEmpty()) {
+            throw new ComplaintServiceException("Complaint with id " + complaintId + " not found");
+        }
+        return getUserComplaintResponse(complaintOptional.get());
+    }
+
     public List<ComplaintResponse> getUserComplaints(String clientId, String userId) {
         List<Complaint> userComplaints = complaintRepository.findByClientIdAndUserId(clientId, userId);
         return getComplaintResponses(userComplaints);
