@@ -43,9 +43,15 @@ public class AuthServiceHelper {
 
     public LoginResponse authenticateAndGenerateToken(String username, String password) {
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, password);
+        Optional<UserDetail> userDetailOptional = userDetailsRepo.findByUserId(username);
+        if (userDetailOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Invalid login request");
+        }
+
+        UserDetail userDetail = userDetailOptional.get();
         Authentication authentication = authenticationManager.authenticate(auth);
         if (authentication.isAuthenticated()) {
-            return AuthService.generateToken(username, authentication);
+            return AuthService.generateToken(userDetail, authentication);
         } else {
             throw new UsernameNotFoundException("Invalid login request");
         }

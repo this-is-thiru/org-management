@@ -2,7 +2,7 @@ package com.application.ene.orgmanagement.auth.controller;
 
 import com.application.ene.orgmanagement.auth.dto.RegistrationRequest;
 import com.application.ene.orgmanagement.auth.dto.UserUpdateRequest;
-import com.application.ene.orgmanagement.auth.entity.UserDetail;
+import com.application.ene.orgmanagement.auth.entity.ClientPersonnelDetail;
 import com.application.ene.orgmanagement.auth.service.AuthService;
 import com.application.ene.orgmanagement.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/user-service/user")
+@RequestMapping("/user-service/employee")
 @RequiredArgsConstructor
-public class UserController {
+public class ClientPersonelController {
 
     private final UserService userService;
     private final AuthService authService;
 
     @GetMapping("/details/{userId}")
-    public UserDetail getUserDetailsByUserId(@PathVariable String userId) {
-        return userService.getUserDetailByUserId(userId);
+    public ClientPersonnelDetail getUserDetailsByUserId(@PathVariable String userId) {
+        return userService.getClientPersonnelDetailByUserId(userId);
     }
 
     @PutMapping("/update-details")

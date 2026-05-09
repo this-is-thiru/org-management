@@ -28,6 +28,11 @@ public class ComplaintController {
         return complaintService.createComplaint(request);
     }
 
+    @GetMapping("/complaint/{complaintId}")
+    public ComplaintResponse createComplaint(@PathVariable String complaintId) {
+        return complaintService.getComplaintById(complaintId);
+    }
+
     @PostMapping("/complaint/update/{complaintId}")
     public void updateComplaintStatus(@PathVariable String complaintId, @RequestBody ComplaintUpdateDto request) {
         complaintService.updateComplaintStatus(complaintId, request);
@@ -36,6 +41,11 @@ public class ComplaintController {
     @PostMapping("/complaint/escalate-to/{complaintId}")
     public void escalateTo(@PathVariable String complaintId, @RequestBody ComplaintUpdateDto request) {
         complaintService.escalateTo(complaintId, request);
+    }
+
+    @PostMapping("/complaint/assign-to/{complaintId}")
+    public void assignTo(@PathVariable String complaintId, @RequestBody ComplaintUpdateDto request) {
+        complaintService.assignTo(complaintId, request);
     }
 
     @GetMapping("/complaint/categories/all")

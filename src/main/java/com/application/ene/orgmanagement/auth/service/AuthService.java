@@ -4,7 +4,10 @@ package com.application.ene.orgmanagement.auth.service;
 import com.application.ene.orgmanagement.auth.dto.AuthHelper;
 import com.application.ene.orgmanagement.auth.dto.LoginResponse;
 import com.application.ene.orgmanagement.auth.dto.RegistrationRequest;
+import com.application.ene.orgmanagement.auth.dto.UserIdDto;
+import com.application.ene.orgmanagement.auth.entity.ClientPersonnelDetail;
 import com.application.ene.orgmanagement.auth.entity.UserDetail;
+import com.application.ene.orgmanagement.auth.repository.ClientPersonnelDetailsRepository;
 import com.application.ene.orgmanagement.auth.repository.UserDetailsRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -24,6 +27,7 @@ import java.time.LocalDate;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,34 +40,73 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsRepository userDetailsRepo;
+    private final ClientPersonnelDetailsRepository clientPersonnelDetailsRepository;
 
-    public String addUser(RegistrationRequest request) {
+    public UserIdDto addUser(RegistrationRequest request) {
 
         Optional<UserDetail> optionalUserDetails = userDetailsRepo.findByClientIdAndEmail(request.getClientId(), request.getEmail());
         if (optionalUserDetails.isPresent()) {
             throw new IllegalArgumentException("User with email " + request.getEmail() + " already exists");
         }
 
-        String userId = createClientId(request.getClientId());
+        String userId = createClientUserId(request.getClientId());
         UserDetail userEntity = new UserDetail();
         userEntity.setClientId(request.getClientId());
         userEntity.setUserId(userId);
+        userEntity.setName(request.getName());
         userEntity.setEmail(request.getEmail());
         userEntity.setPassword(passwordEncoder.encode(request.getPassword()));
         userEntity.setRoles(request.getRole().name());
         userDetailsRepo.save(userEntity);
-        return userId;
+
+        return new UserIdDto(userId);
     }
 
-    private String createClientId(String clientId) {
+    public UserIdDto addEmployee(RegistrationRequest request) {
+
+        Optional<ClientPersonnelDetail> optionalUserDetails = clientPersonnelDetailsRepository.findByClientIdAndEmail(request.getClientId(), request.getEmail());
+        if (optionalUserDetails.isPresent()) {
+            throw new IllegalArgumentException("Employee with email " + request.getEmail() + " already exists");
+        }
+
+        String userId = createClientPersonnelId(request.getClientId());
+        ClientPersonnelDetail personnelDetail = new ClientPersonnelDetail();
+        personnelDetail.setClientId(request.getClientId());
+        personnelDetail.setUserId(userId);
+        personnelDetail.setName(request.getName());
+        personnelDetail.setEmail(request.getEmail());
+        personnelDetail.setPassword(passwordEncoder.encode(request.getPassword()));
+        personnelDetail.setRoles(request.getRole().name());
+        clientPersonnelDetailsRepository.save(personnelDetail);
+        return new UserIdDto(userId);
+    }
+
+    public List<ClientPersonnelDetail> getAllEmployees(String clientId) {
+        return clientPersonnelDetailsRepository.findByClientIdAndStatusIsTrue(clientId);
+    }
+
+    private String createClientUserId(String clientId) {
         String userId = LocalDate.now().getYear() + "";
         userId += clientId.substring(0, 4);
-        String upperCase = UUID.randomUUID().toString().substring(0, 18).toUpperCase().replaceAll("-", "");
+        String upperCase = UUID.randomUUID().toString().substring(0, 18).toUpperCase().replace("-", "");
         String tempUserId = userId + upperCase;
 
         Optional<UserDetail> userDetails = userDetailsRepo.findByUserId(tempUserId);
         if (userDetails.isPresent()) {
-            return createClientId(clientId);
+            return createClientUserId(clientId);
+        }
+        return tempUserId;
+    }
+
+    private String createClientPersonnelId(String clientId) {
+        String userId = LocalDate.now().getYear() + "";
+        userId += clientId.substring(0, 4);
+        String upperCase = UUID.randomUUID().toString().substring(0, 18).toUpperCase().replace("-", "");
+        String tempUserId = "E" + userId + upperCase;
+
+        Optional<ClientPersonnelDetail> clientPersonnelDetail = clientPersonnelDetailsRepository.findByUserId(tempUserId);
+        if (clientPersonnelDetail.isPresent()) {
+            return createClientPersonnelId(clientId);
         }
         return tempUserId;
     }
@@ -159,11 +202,11 @@ public class AuthService {
         return email + "'s password changed successfully";
     }
 
-    public static LoginResponse generateToken(String username, Authentication authentication) {
-        return createToken(username, authentication);
+    public static LoginResponse generateToken(UserDetail userDetail, Authentication authentication) {
+        return createToken(userDetail, authentication);
     }
 
-    private static LoginResponse createToken(String username, Authentication authentication) {
+    private static LoginResponse createToken(UserDetail userDetail, Authentication authentication) {
         int expirationTime = 60 * 30;
         Map<String, Object> claims = new HashMap<>();
         AuthHelper.setRoles(claims, authentication.getAuthorities());
@@ -171,13 +214,13 @@ public class AuthService {
 
         String token = Jwts.builder()
                 .claims(claims)
-                .subject(username)
+                .subject(userDetail.getUserId())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(expiration)
                 .signWith(getSignInKey())
                 .compact();
 
-        return LoginResponse.from(token, username, expirationTime);
+        return LoginResponse.from(userDetail.getUserId(), userDetail.getName(), token, expirationTime);
     }
 
     private static SecretKey getSignInKey() {

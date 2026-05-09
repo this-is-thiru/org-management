@@ -63,6 +63,14 @@ public class ComplaintService {
         return getComplaintResponses(complaintsWithStatuses);
     }
 
+    public ComplaintResponse getComplaintById(String complaintId) {
+        var complaintOptional = complaintRepository.findById(complaintId);
+        if (complaintOptional.isEmpty()) {
+            throw new ComplaintServiceException("Complaint with id " + complaintId + " not found");
+        }
+        return getUserComplaintResponse(complaintOptional.get());
+    }
+
     public List<ComplaintResponse> getUserComplaints(String clientId, String userId) {
         List<Complaint> userComplaints = complaintRepository.findByClientIdAndUserId(clientId, userId);
         return getComplaintResponses(userComplaints);
@@ -95,6 +103,16 @@ public class ComplaintService {
         complaintRepository.save(complaint);
     }
 
+    public void assignTo(String complaintId, ComplaintUpdateDto request) {
+        validateComplaint(request);
+        Complaint complaint = complaintRepository.findById(complaintId).orElseThrow(() -> new ComplaintServiceException("Complaint not found with id: " + complaintId));
+        complaint.setAssignedTo(request.getAssignTo());
+        ComplaintStatusUpdate statusUpdate = ComplaintStatusUpdate.builder().statusId(request.getStatusId()).status("UPDATED").notes(request.getNotes())
+                .createdAt(Instant.now()).updatedAt(Instant.now()).updatedBy(securityAuditorAware.getAuditor()).build();
+        complaint.getStatusUpdates().add(statusUpdate);
+        complaintRepository.save(complaint);
+    }
+
     public List<Complaint> escalatedComplaints(String clientPersonnelId) {
         return complaintRepository.findByEscalateTo(clientPersonnelId);
     }
@@ -110,8 +128,8 @@ public class ComplaintService {
     private ComplaintResponse getUserComplaintResponse(Complaint complaint) {
         ComplaintResponse complaintResponse = TJsonMapper.copy(complaint, ComplaintResponse.class);
         complaintResponse.setUserDetails(getUserDetails(complaint.getUserId()));
-        complaintResponse.setAssignedToDetails(getUserDetails(complaint.getAssignedTo()));
-        complaintResponse.setEscalateToDetails(getUserDetails(complaint.getEscalateTo()));
+        complaintResponse.setAssignedToDetails(getEmployeeDetails(complaint.getAssignedTo()));
+        complaintResponse.setEscalateToDetails(getEmployeeDetails(complaint.getEscalateTo()));
         complaintResponse.setReportedByDetails(getUserDetails(complaint.getReportedBy()));
         return complaintResponse;
     }
@@ -121,11 +139,23 @@ public class ComplaintService {
         return new UserDto(userDetails.getUserId(), userDetails.getName());
     }
 
+    public UserDto getEmployeeDetails(String userId) {
+        var userDetails = getEmployeeDetail(userId);
+        return new UserDto(userDetails.getUserId(), userDetails.getName());
+    }
+
     private UserDetailsResponse getUserDetail(String userId) {
         if (userId == null) {
             return new UserDetailsResponse();
         }
         return userGateway.getUserDetails(userId);
+    }
+
+    private UserDetailsResponse getEmployeeDetail(String userId) {
+        if (userId == null) {
+            return new UserDetailsResponse();
+        }
+        return userGateway.getEmployeeDetails(userId);
     }
 
     private void validateComplaint(ComplaintCreationDto request) {

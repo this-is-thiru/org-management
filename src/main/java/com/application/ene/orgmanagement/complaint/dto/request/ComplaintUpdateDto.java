@@ -9,6 +9,7 @@ public class ComplaintUpdateDto {
     private int statusId;
     private String category;
     private String updatedBy;
+    private String assignTo;
     private String escalateTo;
     private List<String> notes;
 }

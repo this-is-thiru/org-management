@@ -4,6 +4,8 @@ import com.application.ene.orgmanagement.auth.dto.LoginRequest;
 import com.application.ene.orgmanagement.auth.dto.LoginResponse;
 import com.application.ene.orgmanagement.auth.dto.RegistrationRequest;
 import com.application.ene.orgmanagement.auth.dto.RoleUpgradeRequest;
+import com.application.ene.orgmanagement.auth.dto.UserIdDto;
+import com.application.ene.orgmanagement.auth.entity.ClientPersonnelDetail;
 import com.application.ene.orgmanagement.auth.service.AuthService;
 import com.application.ene.orgmanagement.auth.service.AuthServiceHelper;
 import lombok.AllArgsConstructor;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -34,8 +38,18 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String addNewUser(@RequestBody RegistrationRequest request) {
+    public UserIdDto addNewUser(@RequestBody RegistrationRequest request) {
         return authService.addUser(request);
+    }
+
+    @PostMapping("/employee/register")
+    public UserIdDto addEmployee(@RequestBody RegistrationRequest request) {
+        return authService.addEmployee(request);
+    }
+
+    @PostMapping("/employees/{clientId}")
+    public List<ClientPersonnelDetail> getClientEmployees(@PathVariable String clientId) {
+        return authService.getAllEmployees(clientId);
     }
 
     @PostMapping("/test")
