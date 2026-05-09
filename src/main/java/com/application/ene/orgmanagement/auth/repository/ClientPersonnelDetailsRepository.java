@@ -11,8 +11,6 @@ public interface ClientPersonnelDetailsRepository extends JpaRepository<ClientPe
 
 	Optional<ClientPersonnelDetail> findByUserId(String userId);
 
-	Optional<ClientPersonnelDetail> findByEmail(String email);
-
 	List<ClientPersonnelDetail> findByClientIdAndStatusIsTrue(String clientId);
 
 	Optional<ClientPersonnelDetail> findByClientIdAndEmail(String clientId, String email);
